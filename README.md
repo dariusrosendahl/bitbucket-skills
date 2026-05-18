@@ -1,10 +1,10 @@
 # bitbucket-skills
 
-Claude Code plugin marketplace for Bitbucket Cloud workflows.
+Bitbucket Cloud skills for AI coding agents — works in Claude Code, Codex, Cursor, GitHub Copilot Chat, and [50+ other agents](https://github.com/vercel-labs/skills#supported-agents).
 
 ## What's inside
 
-Two skills for working with Bitbucket Cloud pull requests from inside Claude Code:
+Two skills for working with Bitbucket Cloud pull requests:
 
 - **`/bitbucket-pr-write`** — generate a PR description from the current branch's git history.
   - **Preview** (default) — outputs copy-pastable markdown.
@@ -13,58 +13,26 @@ Two skills for working with Bitbucket Cloud pull requests from inside Claude Cod
 
 Workspace, repo, and PR id are derived from the URL you paste or from `git remote get-url origin`. No hardcoded workspace.
 
-## Install (Claude Code)
+## Install
 
-Works in Claude Code CLI and the `anthropic.claude-code` VS Code extension — same install, both surfaces. Auto-updates via `/plugin marketplace update`, cleanly reverses with `/plugin uninstall`.
+```sh
+npx skills add dariusrosendahl/bitbucket-skills
+```
+
+Run from inside your agent (Claude Code, Codex CLI, etc.) — the [vercel-labs/skills](https://github.com/vercel-labs/skills) CLI auto-detects which one you're in and symlinks the skills into the right location. Add `-g` for a global install across all your projects, or `--copy` if symlinks aren't supported. Same CLI handles `update`, `remove`, and `list`.
+
+### Backup: Claude Code marketplace
+
+If you'd rather not run `npx` (or want the namespaced `bitbucket-skills:` prefix in the skill picker):
 
 ```sh
 /plugin marketplace add dariusrosendahl/bitbucket-skills
 /plugin install bitbucket-skills
 ```
 
-Skills then appear in the skill picker as `bitbucket-skills:bitbucket-pr-review` and `bitbucket-skills:bitbucket-pr-write`.
+### Caveat for non-Claude-Code agents
 
-### Alternative: symlink from a local clone
-
-If you want to hack on the skills locally and have changes show up in Claude Code immediately (without `/plugin marketplace update`), clone the repo and run the link script. Skills are then exposed un-namespaced as `bitbucket-pr-review` / `bitbucket-pr-write` (no `bitbucket-skills:` prefix), so don't combine this with the `/plugin install` above or you'll see duplicates.
-
-```sh
-git clone https://github.com/dariusrosendahl/bitbucket-skills.git
-cd bitbucket-skills
-./scripts/link-skills.sh
-```
-
-`scripts/list-skills.sh` prints every `SKILL.md` in the repo if you want a manifest.
-
-## Install (Codex CLI)
-
-Symlinks `SKILL.md` into `~/.codex/prompts/` so Codex picks them up as user prompts. `git pull` propagates new versions automatically.
-
-```sh
-git clone https://github.com/dariusrosendahl/bitbucket-skills.git
-cd bitbucket-skills
-./scripts/link-codex.sh
-```
-
-Invoke with `/bitbucket-pr-review` or `/bitbucket-pr-write` in Codex. The Bitbucket env vars from [Setup](#setup) still apply.
-
-Note: `bitbucket-pr-review` dispatches subagents in Claude Code. Codex doesn't support subagents — it falls back to a single inline review covering the same criteria.
-
-## Install (VS Code Copilot Chat — no Claude Code)
-
-For colleagues who use **only** VS Code (no Claude Code, no Codex). Copies `SKILL.md` files into VS Code's User-prompts dir as `<name>.prompt.md`, rewriting the Claude Code `name:` frontmatter to the `mode: agent` field Copilot expects. macOS and Linux auto-detected; Windows users should follow the script's error message.
-
-```sh
-git clone https://github.com/dariusrosendahl/bitbucket-skills.git
-cd bitbucket-skills
-./scripts/install-vscode-copilot.sh
-```
-
-Reload VS Code (`Cmd+Shift+P` → "Developer: Reload Window"), then type `/` in Copilot Chat — both prompts should appear in the autocomplete. Re-run the script after `git pull` (these are copies, not symlinks, since the frontmatter has to be rewritten).
-
-### Caveat for VS Code Copilot Chat users
-
-These prompts were authored for Claude Code and reference patterns like multi-agent dispatch (`pr-review-toolkit:code-reviewer` etc.) and tool invocations that don't exist in Copilot Chat. The chat will follow the instructions as **guidance** (asking you to run `curl` commands manually, doing a single inline review instead of parallel agents). For full auto-execution use Claude Code.
+These skills were authored for Claude Code and reference patterns like multi-agent dispatch (`pr-review-toolkit:code-reviewer` etc.) and tool invocations that other agents don't run natively. In Codex, Copilot Chat, Cursor, etc., the skills are followed as **guidance** — you may be asked to run `curl` commands manually, and `bitbucket-pr-review` falls back to a single inline review instead of the parallel multi-agent flow. For full auto-execution use Claude Code.
 
 ## Setup
 
