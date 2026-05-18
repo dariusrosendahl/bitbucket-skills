@@ -24,6 +24,18 @@ Works in Claude Code CLI and the `anthropic.claude-code` VS Code extension — s
 
 Skills then appear in the skill picker as `bitbucket-skills:bitbucket-pr-review` and `bitbucket-skills:bitbucket-pr-write`.
 
+### Alternative: symlink from a local clone
+
+If you want to hack on the skills locally and have changes show up in Claude Code immediately (without `/plugin marketplace update`), clone the repo and run the link script. Skills are then exposed un-namespaced as `bitbucket-pr-review` / `bitbucket-pr-write` (no `bitbucket-skills:` prefix), so don't combine this with the `/plugin install` above or you'll see duplicates.
+
+```sh
+git clone https://github.com/dariusrosendahl/bitbucket-skills.git
+cd bitbucket-skills
+./scripts/link-skills.sh
+```
+
+`scripts/list-skills.sh` prints every `SKILL.md` in the repo if you want a manifest.
+
 ## Install (Codex CLI)
 
 The SKILL.md files are plain markdown and work in Codex CLI as user prompts. Codex picks up any `.md` file from `~/.codex/prompts/`:
