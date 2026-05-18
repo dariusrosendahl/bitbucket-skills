@@ -24,6 +24,24 @@ Works in Claude Code CLI and the `anthropic.claude-code` VS Code extension — s
 
 Skills then appear in the skill picker as `bitbucket-skills:bitbucket-pr-review` and `bitbucket-skills:bitbucket-pr-write`.
 
+## Install (Codex CLI)
+
+The SKILL.md files are plain markdown and work in Codex CLI as user prompts. Codex picks up any `.md` file from `~/.codex/prompts/`:
+
+```sh
+git clone https://github.com/dariusrosendahl/bitbucket-skills.git /tmp/bitbucket-skills
+mkdir -p ~/.codex/prompts
+
+cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-review/SKILL.md \
+   ~/.codex/prompts/bitbucket-pr-review.md
+cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
+   ~/.codex/prompts/bitbucket-pr-write.md
+```
+
+Invoke with `/bitbucket-pr-review` or `/bitbucket-pr-write` in Codex. The Bitbucket env vars from [Setup](#setup) still apply.
+
+Note: `bitbucket-pr-review` dispatches subagents in Claude Code. Codex doesn't support subagents — it falls back to a single inline review covering the same criteria.
+
 ## Install (VS Code Copilot Chat — no Claude Code)
 
 Only do this if you don't have Claude Code installed. These files are surfaced in the VS Code Copilot Chat "Select prompt file" picker. Run from anywhere — the destination is an absolute path:
