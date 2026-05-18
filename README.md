@@ -13,12 +13,48 @@ Two skills for working with Bitbucket Cloud pull requests from inside Claude Cod
 
 Workspace, repo, and PR id are derived from the URL you paste or from `git remote get-url origin`. No hardcoded workspace.
 
-## Install
+## Install (Claude Code)
 
 ```sh
 /plugin marketplace add dariusrosendahl/bitbucket-skills
 /plugin install bitbucket-skills
 ```
+
+## Install (Codex CLI)
+
+The SKILL.md files are plain markdown and work in Codex CLI as prompts. Copy them into your Codex prompts folder:
+
+```sh
+git clone https://github.com/dariusrosendahl/bitbucket-skills.git /tmp/bitbucket-skills
+mkdir -p ~/.codex/prompts
+cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
+   ~/.codex/prompts/bitbucket-pr-write.md
+cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-review/SKILL.md \
+   ~/.codex/prompts/bitbucket-pr-review.md
+```
+
+Invoke with `/bitbucket-pr-write` or `/bitbucket-pr-review` in Codex. The same `BITBUCKET_EMAIL` / `BITBUCKET_API_TOKEN` env vars apply (see [Setup](#setup) below).
+
+Note: `bitbucket-pr-review` dispatches subagents, which Codex's prompt-only model doesn't support natively — it will fall back to an inline review covering the same criteria.
+
+## Install (GitHub Copilot, VS Code)
+
+Copy the SKILL.md files into your repo's prompts folder:
+
+```sh
+git clone https://github.com/dariusrosendahl/bitbucket-skills.git /tmp/bitbucket-skills
+mkdir -p .github/prompts
+cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
+   .github/prompts/bitbucket-pr-write.prompt.md
+cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-review/SKILL.md \
+   .github/prompts/bitbucket-pr-review.prompt.md
+```
+
+Invoke with `/bitbucket-pr-write` or `/bitbucket-pr-review` in Copilot Chat.
+
+## Cross-tool (AGENTS.md)
+
+For tools that auto-load `AGENTS.md` (Codex, Cursor, Aider), append the SKILL.md content to your repo's `AGENTS.md` to make either skill always-on for that repo. The same Bitbucket env-var setup still applies.
 
 ## Setup
 
