@@ -38,16 +38,12 @@ cd bitbucket-skills
 
 ## Install (Codex CLI)
 
-The SKILL.md files are plain markdown and work in Codex CLI as user prompts. Codex picks up any `.md` file from `~/.codex/prompts/`:
+Symlinks `SKILL.md` into `~/.codex/prompts/` so Codex picks them up as user prompts. `git pull` propagates new versions automatically.
 
 ```sh
-git clone https://github.com/dariusrosendahl/bitbucket-skills.git /tmp/bitbucket-skills
-mkdir -p ~/.codex/prompts
-
-cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-review/SKILL.md \
-   ~/.codex/prompts/bitbucket-pr-review.md
-cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
-   ~/.codex/prompts/bitbucket-pr-write.md
+git clone https://github.com/dariusrosendahl/bitbucket-skills.git
+cd bitbucket-skills
+./scripts/link-codex.sh
 ```
 
 Invoke with `/bitbucket-pr-review` or `/bitbucket-pr-write` in Codex. The Bitbucket env vars from [Setup](#setup) still apply.
@@ -56,29 +52,15 @@ Note: `bitbucket-pr-review` dispatches subagents in Claude Code. Codex doesn't s
 
 ## Install (VS Code Copilot Chat — no Claude Code)
 
-Only do this if you don't have Claude Code installed. These files are surfaced in the VS Code Copilot Chat "Select prompt file" picker. Run from anywhere — the destination is an absolute path:
+For colleagues who use **only** VS Code (no Claude Code, no Codex). Copies `SKILL.md` files into VS Code's User-prompts dir as `<name>.prompt.md`, rewriting the Claude Code `name:` frontmatter to the `mode: agent` field Copilot expects. macOS and Linux auto-detected; Windows users should follow the script's error message.
 
 ```sh
-git clone https://github.com/dariusrosendahl/bitbucket-skills.git /tmp/bitbucket-skills
-
-# Pick the right path for your OS:
-#   macOS:   ~/Library/Application Support/Code/User/prompts
-#   Linux:   ~/.config/Code/User/prompts
-#   Windows: %APPDATA%\Code\User\prompts
-DEST="$HOME/Library/Application Support/Code/User/prompts"
-mkdir -p "$DEST"
-
-cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-review/SKILL.md \
-   "$DEST/bitbucket-pr-review.prompt.md"
-cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
-   "$DEST/bitbucket-pr-write.prompt.md"
-
-# Rewrite the Claude Code frontmatter into VS Code prompt-file frontmatter:
-sed -i.bak '1,/^---$/{ s/^name: .*$/mode: agent/; }' "$DEST/bitbucket-pr-review.prompt.md" "$DEST/bitbucket-pr-write.prompt.md"
-rm "$DEST"/*.bak
+git clone https://github.com/dariusrosendahl/bitbucket-skills.git
+cd bitbucket-skills
+./scripts/install-vscode-copilot.sh
 ```
 
-Reload VS Code (`Cmd+Shift+P` → "Developer: Reload Window"), then type `/` in Copilot Chat — both should appear in the autocomplete.
+Reload VS Code (`Cmd+Shift+P` → "Developer: Reload Window"), then type `/` in Copilot Chat — both prompts should appear in the autocomplete. Re-run the script after `git pull` (these are copies, not symlinks, since the frontmatter has to be rewritten).
 
 ### Caveat for VS Code Copilot Chat users
 
