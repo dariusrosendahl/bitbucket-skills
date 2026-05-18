@@ -13,24 +13,18 @@ Two skills for working with Bitbucket Cloud pull requests from inside Claude Cod
 
 Workspace, repo, and PR id are derived from the URL you paste or from `git remote get-url origin`. No hardcoded workspace.
 
-## Install as Claude Code skills (recommended)
+## Install (Claude Code)
 
-Works in Claude Code CLI and the `anthropic.claude-code` VS Code extension automatically — same install, both surfaces.
+Works in Claude Code CLI and the `anthropic.claude-code` VS Code extension — same install, both surfaces. Auto-updates via `/plugin marketplace update`, cleanly reverses with `/plugin uninstall`.
 
 ```sh
-git clone https://github.com/dariusrosendahl/bitbucket-skills.git /tmp/bitbucket-skills
-
-mkdir -p ~/.claude/skills/bitbucket-pr-review ~/.claude/skills/bitbucket-pr-write
-
-cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-review/SKILL.md \
-   ~/.claude/skills/bitbucket-pr-review/SKILL.md
-cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
-   ~/.claude/skills/bitbucket-pr-write/SKILL.md
+/plugin marketplace add dariusrosendahl/bitbucket-skills
+/plugin install bitbucket-skills
 ```
 
-Verify in Claude Code: type `/bitbucket-pr-review <url>` or run `/skills`. Verify in VS Code with the Claude Code extension: `Cmd+Shift+P` → "Claude Code: Select skill to open" — the two should appear in the list.
+Skills then appear in the skill picker as `bitbucket-skills:bitbucket-pr-review` and `bitbucket-skills:bitbucket-pr-write`.
 
-## Install as VS Code Copilot Chat prompt files (no Claude Code)
+## Install (VS Code Copilot Chat — no Claude Code)
 
 Only do this if you don't have Claude Code installed. These files are surfaced in the VS Code Copilot Chat "Select prompt file" picker. Run from anywhere — the destination is an absolute path:
 
