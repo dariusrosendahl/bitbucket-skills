@@ -1,0 +1,21 @@
+{
+  "name": "bitbucket-skills",
+  "version": "0.1.0",
+  "description": "Claude Code skills for working with Bitbucket Cloud pull requests — write PR descriptions and create draft PRs, or fetch a PR and run a parallel multi-agent code review against the diff.",
+  "author": {
+    "name": "Darius Rosendahl",
+    "email": "darius@doordarius.nl",
+    "url": "https://doordarius.nl"
+  },
+  "homepage": "https://github.com/dariusrosendahl/bitbucket-skills",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "skills",
+    "bitbucket",
+    "bitbucket-cloud",
+    "pull-request",
+    "code-review",
+    "pr-description"
+  ]
+}

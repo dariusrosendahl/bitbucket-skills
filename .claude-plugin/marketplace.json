@@ -1,0 +1,20 @@
+{
+  "name": "bitbucket-skills",
+  "owner": {
+    "name": "Darius Rosendahl",
+    "email": "darius@doordarius.nl",
+    "url": "https://doordarius.nl"
+  },
+  "plugins": [
+    {
+      "name": "bitbucket-skills",
+      "source": "./plugins/bitbucket-skills",
+      "description": "Claude Code skills for working with Bitbucket Cloud pull requests — write PR descriptions and create draft PRs, or fetch a PR and run a parallel multi-agent code review against the diff.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Darius Rosendahl",
+        "email": "darius@doordarius.nl"
+      }
+    }
+  ]
+}
