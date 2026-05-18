@@ -13,48 +13,52 @@ Two skills for working with Bitbucket Cloud pull requests from inside Claude Cod
 
 Workspace, repo, and PR id are derived from the URL you paste or from `git remote get-url origin`. No hardcoded workspace.
 
-## Install (Claude Code)
+## Install as Claude Code skills (recommended)
 
-```sh
-/plugin marketplace add dariusrosendahl/bitbucket-skills
-/plugin install bitbucket-skills
-```
-
-## Install (Codex CLI)
-
-The SKILL.md files are plain markdown and work in Codex CLI as prompts. Copy them into your Codex prompts folder:
+Works in Claude Code CLI and the `anthropic.claude-code` VS Code extension automatically — same install, both surfaces.
 
 ```sh
 git clone https://github.com/dariusrosendahl/bitbucket-skills.git /tmp/bitbucket-skills
-mkdir -p ~/.codex/prompts
-cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
-   ~/.codex/prompts/bitbucket-pr-write.md
+
+mkdir -p ~/.claude/skills/bitbucket-pr-review ~/.claude/skills/bitbucket-pr-write
+
 cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-review/SKILL.md \
-   ~/.codex/prompts/bitbucket-pr-review.md
+   ~/.claude/skills/bitbucket-pr-review/SKILL.md
+cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
+   ~/.claude/skills/bitbucket-pr-write/SKILL.md
 ```
 
-Invoke with `/bitbucket-pr-write` or `/bitbucket-pr-review` in Codex. The same `BITBUCKET_EMAIL` / `BITBUCKET_API_TOKEN` env vars apply (see [Setup](#setup) below).
+Verify in Claude Code: type `/bitbucket-pr-review <url>` or run `/skills`. Verify in VS Code with the Claude Code extension: `Cmd+Shift+P` → "Claude Code: Select skill to open" — the two should appear in the list.
 
-Note: `bitbucket-pr-review` dispatches subagents, which Codex's prompt-only model doesn't support natively — it will fall back to an inline review covering the same criteria.
+## Install as VS Code Copilot Chat prompt files (no Claude Code)
 
-## Install (GitHub Copilot, VS Code)
-
-Copy the SKILL.md files into your repo's prompts folder:
+Only do this if you don't have Claude Code installed. These files are surfaced in the VS Code Copilot Chat "Select prompt file" picker. Run from anywhere — the destination is an absolute path:
 
 ```sh
 git clone https://github.com/dariusrosendahl/bitbucket-skills.git /tmp/bitbucket-skills
-mkdir -p .github/prompts
-cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
-   .github/prompts/bitbucket-pr-write.prompt.md
+
+# Pick the right path for your OS:
+#   macOS:   ~/Library/Application Support/Code/User/prompts
+#   Linux:   ~/.config/Code/User/prompts
+#   Windows: %APPDATA%\Code\User\prompts
+DEST="$HOME/Library/Application Support/Code/User/prompts"
+mkdir -p "$DEST"
+
 cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-review/SKILL.md \
-   .github/prompts/bitbucket-pr-review.prompt.md
+   "$DEST/bitbucket-pr-review.prompt.md"
+cp /tmp/bitbucket-skills/plugins/bitbucket-skills/skills/bitbucket-pr-write/SKILL.md \
+   "$DEST/bitbucket-pr-write.prompt.md"
+
+# Rewrite the Claude Code frontmatter into VS Code prompt-file frontmatter:
+sed -i.bak '1,/^---$/{ s/^name: .*$/mode: agent/; }' "$DEST/bitbucket-pr-review.prompt.md" "$DEST/bitbucket-pr-write.prompt.md"
+rm "$DEST"/*.bak
 ```
 
-Invoke with `/bitbucket-pr-write` or `/bitbucket-pr-review` in Copilot Chat.
+Reload VS Code (`Cmd+Shift+P` → "Developer: Reload Window"), then type `/` in Copilot Chat — both should appear in the autocomplete.
 
-## Cross-tool (AGENTS.md)
+### Caveat for VS Code Copilot Chat users
 
-For tools that auto-load `AGENTS.md` (Codex, Cursor, Aider), append the SKILL.md content to your repo's `AGENTS.md` to make either skill always-on for that repo. The same Bitbucket env-var setup still applies.
+These prompts were authored for Claude Code and reference patterns like multi-agent dispatch (`pr-review-toolkit:code-reviewer` etc.) and tool invocations that don't exist in Copilot Chat. The chat will follow the instructions as **guidance** (asking you to run `curl` commands manually, doing a single inline review instead of parallel agents). For full auto-execution use Claude Code.
 
 ## Setup
 
