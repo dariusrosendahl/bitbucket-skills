@@ -36,7 +36,7 @@ If either env var is missing in create mode, stop and link to the token page. Ne
    - Optionally `git diff <base>..HEAD -- '*.json'` for dependency changes
 3. **Identify the ticket ID** from branch name or commit prefixes (e.g. `PROJ-123`). If no prefix, derive a short slug from the changes and skip the prefix.
 4. **Categorize changes** into groups: dependency changes, code migrations, bug fixes, new features, config changes.
-5. **Render markdown** in the format below, wrapped in a single fenced code block.
+5. **Render and output the markdown** — **wrap the entire rendered description in a single outer fenced code block** so the user can copy raw markdown without scraping rendered headers from the terminal. Use four-backtick fences (so any triple-backtick code blocks *inside* the description stay intact). The very first characters of the response (after any one-line "Gathering data…" status) must be ` ```` ` and the very last must be ` ```` `, with the markdown described in **Output Format** between them. **Never** render the markdown live (as actual rendered headers/lists/bold) — that defeats copy-paste.
 
 ## Steps — create (only when explicitly requested)
 
@@ -55,7 +55,7 @@ After preview is rendered:
    - **Only auto-push** if the user's invocation explicitly contained a push instruction (e.g. "and push it", "push and open the PR"). In that case run `git push -u origin <branch>` first, then continue.
 
 8. **Check for an existing open PR** on this source branch:
-   `GET /2.0/repositories/<workspace>/<repo>/pullrequests?q=source.branch.name="<branch>"+AND+state="OPEN"`
+   `GET /2.0/repositories/<workspace>/<repo>/pullrequests?q=source.branch.name="<branch>"+AND+state="OPEN"` (URL-encode the query value).
 
    If one or more match, present the user with the existing PR's link and a runtime choice:
    - `(1)` Update the existing PR's title + description (`PUT .../pullrequests/<id>` with the rendered fields).
@@ -81,6 +81,8 @@ After preview is rendered:
     Return `links.html.href` so the user can open the PR.
 
 ## Output Format (preview markdown)
+
+The content **inside** the outer fenced code block must look like this:
 
 ```
 ## <Ticket-ID>: <Short descriptive title>
@@ -108,12 +110,16 @@ After preview is rendered:
 ### Markdown rules
 - Concise — reviewers scan, they don't read essays.
 - Group related changes under bold category headers.
-- Imperative mood ("Update X", "Fix Y", not "Updated X").
+- **Imperative mood in bullet points, the title, and any commit-message-style one-liners** ("Update X", "Fix Y", not "Updated X"). **Present-indicative is fine in narrative prose** like the Summary section ("Adds env-var overrides…", "Targets `feature/x`…") — that paragraph reads as a description of the PR, not as a command to the reader.
 - Testing checklist of 3-5 items relevant to the changes.
 - Title derived from the actual changes, not just the ticket ID.
 - For branches with many merged sub-branch commits, focus on those directly relevant to the ticket ID.
 - Always put a blank line between a bold category header (e.g. `**Category**`) and its bullet list — Bitbucket's renderer otherwise styles the header as a heading.
-- Output the final preview inside a single fenced code block so it's easy to copy.
+
+### Output rules (non-negotiable)
+- **Wrap the entire preview output in a single outer fenced code block.** Four backticks on the opening and closing fences. Nothing inside that block other than the markdown described in **Output Format**. Nothing outside that block in preview mode except (a) a one-line status before it ("Gathering branch data…") and (b) the create-mode prompt after it ("This is preview only — want me to open it as a draft PR?").
+- **Never** render the markdown live (as actual rendered headers / lists / bold). The user needs raw, copy-pastable markdown.
+- Self-check: if you see `## Header` rendering as a heading in your transcript instead of as literal text, you forgot the outer fenced block. Re-emit with the fences.
 
 ### Create-mode rules
 - **Never auto-push** unless the user's invocation explicitly says so. Refuse and instruct.
