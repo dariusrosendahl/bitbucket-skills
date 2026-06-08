@@ -1,5 +1,7 @@
 # bitbucket-skills
 
+[![skills.sh](https://skills.sh/b/dariusrosendahl/bitbucket-skills)](https://skills.sh/dariusrosendahl/bitbucket-skills)
+
 Bitbucket Cloud skills for AI coding agents — works in Claude Code, Codex, Cursor, GitHub Copilot Chat, and [50+ other agents](https://github.com/vercel-labs/skills#supported-agents).
 
 ## What's inside
